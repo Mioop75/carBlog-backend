@@ -75,7 +75,7 @@ export class UsersService {
 	async getOne(username: string): Promise<UserEntity> {
 		const user = await this.userRepository.findOne({
 			where: { username },
-			relations: { posts: true, role: true },
+			relations: { posts: { author: true }, role: true },
 		});
 
 		if (!user) {

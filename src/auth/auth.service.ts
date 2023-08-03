@@ -50,6 +50,21 @@ export class AuthService {
 		};
 	}
 
+	async getMe(username: string) {
+		const user = await this.userService.getOne(username);
+
+		const tokens = this.generateTokens({
+			id: user.id,
+			username: user.username,
+			role: user.role,
+		});
+
+		return {
+			user,
+			...tokens,
+		};
+	}
+
 	private generateTokens(payload: any) {
 		const accessToken = this.jwt.sign(payload);
 		const refreshToken = this.jwt.sign(payload, {

@@ -27,7 +27,11 @@ export class PostsService {
 	async getOne(slug: string) {
 		const post = await this.postRepository.findOne({
 			where: { slug },
-			relations: { comments: true, tags: true, author: true },
+			relations: {
+				comments: { author: true },
+				tags: true,
+				author: true,
+			},
 		});
 
 		post.views++;
