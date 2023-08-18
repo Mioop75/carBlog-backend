@@ -49,8 +49,6 @@ export class PostsService {
 			post.preview = preview.path;
 		}
 
-		console.log(post.tags);
-
 		if (dto.tagIds) {
 			const tags = await this.tagsService.getAll(dto.tagIds);
 			post.tags = tags;
