@@ -7,7 +7,8 @@ import { TagEntity } from './tag.entity';
 @Injectable()
 export class TagsService {
 	constructor(
-		@InjectRepository(TagEntity) private tagRepository: Repository<TagEntity>
+		@InjectRepository(TagEntity)
+		private readonly tagRepository: Repository<TagEntity>
 	) {}
 
 	async getAll(tagIds?: number[], postId?: number) {

@@ -6,7 +6,6 @@ import {
 	Param,
 	Post,
 	Put,
-	UploadedFile,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
@@ -51,12 +50,8 @@ export class UsersController {
 			}),
 		})
 	)
-	update(
-		@User('id') id: number,
-		@UploadedFile() avatar: Express.Multer.File,
-		@Body() dto: UpdateUserDto
-	) {
-		return this.usersService.update(id, dto, avatar?.path);
+	update(@User('id') id: number, @Body() dto: UpdateUserDto) {
+		return this.usersService.update(id, dto);
 	}
 
 	@Delete()
@@ -80,26 +75,8 @@ export class UsersController {
 	@Put(':id')
 	@UseGuards(AuthGuard, RolesGuard)
 	@Roles(Role.Admin, Role.Moderator)
-	@UseInterceptors(
-		FileInterceptor('avatar', {
-			storage: diskStorage({
-				destination: './upload/avatars',
-				filename(req, file, callback) {
-					const randomName = Array(32)
-						.fill(null)
-						.map(() => Math.round(Math.random() * 16).toString(16))
-						.join('');
-					callback(null, `${randomName}${extname(file.originalname)}`);
-				},
-			}),
-		})
-	)
-	updateUserByAdmin(
-		@Param('id') id: number,
-		@UploadedFile() avatar: Express.Multer.File,
-		@Body() dto: UpdateUserDto
-	) {
-		return this.usersService.updateByAdmin(id, dto, avatar?.path);
+	updateUserByAdmin(@Param('id') id: number, @Body() dto: UpdateUserDto) {
+		return this.usersService.updateByAdmin(id, dto);
 	}
 
 	@Delete(':id')

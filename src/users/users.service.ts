@@ -16,9 +16,9 @@ import { UserEntity } from './user.entity';
 export class UsersService {
 	constructor(
 		@InjectRepository(UserEntity)
-		private userRepository: Repository<UserEntity>,
-		private roleService: RolesService,
-		private mailerService: MailerService
+		private readonly userRepository: Repository<UserEntity>,
+		private readonly roleService: RolesService,
+		private readonly mailerService: MailerService // private readonly mediaService: MediaService
 	) {}
 
 	async create(dto: CreateUserDto, roleName = 'User'): Promise<UserEntity> {
@@ -85,11 +85,7 @@ export class UsersService {
 		return user;
 	}
 
-	async update(
-		userId: number,
-		dto: UpdateUserDto,
-		avatar?: string
-	): Promise<string> {
+	async update(userId: number, dto: UpdateUserDto): Promise<string> {
 		const oldUser = await this.userRepository.findOneBy({ id: userId });
 
 		if (!oldUser) {
@@ -102,7 +98,7 @@ export class UsersService {
 		await this.userRepository.update(userId, {
 			username: dto.username,
 			password: hashPassword,
-			avatar,
+			avatar: dto.avatar,
 		});
 		return 'Пользователь был редактировать';
 	}
@@ -115,16 +111,12 @@ export class UsersService {
 		}
 
 		await this.userRepository.delete(userId);
+		// this.mediaService.delete(user.avatar);
 
 		return 'Пользователь был удален';
 	}
 
-	async updateByAdmin(
-		id: number,
-		dto: UpdateUserDto,
-		avatar?: string,
-		reason?: string
-	): Promise<string> {
+	async updateByAdmin(id: number, dto: UpdateUserDto): Promise<string> {
 		const oldUser = await this.userRepository.findOneBy({ id });
 
 		if (!oldUser) {
@@ -137,7 +129,7 @@ export class UsersService {
 		await this.userRepository.update(id, {
 			username: dto.username,
 			password: hashPassword,
-			avatar,
+			avatar: dto.avatar,
 		});
 		return 'Пользователь был редактировать админом';
 	}
@@ -148,6 +140,8 @@ export class UsersService {
 		if (!user) {
 			throw new NotFoundException('Пользователь не найден');
 		}
+
+		// this.mediaService.delete(user.avatar);
 
 		await this.userRepository.delete(id);
 

@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { CommentEntity } from 'src/comments/comment.entity';
+import { MediaService } from 'src/media/media.service';
 import { PostEntity } from 'src/posts/post.entity';
 import { RoleEntity } from 'src/roles/role.entity';
 import { RolesModule } from 'src/roles/roles.module';
@@ -12,7 +13,7 @@ import { UsersService } from './users.service';
 
 @Module({
 	controllers: [UsersController],
-	providers: [UsersService],
+	providers: [UsersService, MediaService],
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
 		TypeOrmModule.forFeature([
@@ -21,8 +22,8 @@ import { UsersService } from './users.service';
 			PostEntity,
 			CommentEntity,
 		]),
-		forwardRef(() => AuthModule),
 		RolesModule,
+		forwardRef(() => AuthModule),
 	],
 	exports: [UsersService],
 })

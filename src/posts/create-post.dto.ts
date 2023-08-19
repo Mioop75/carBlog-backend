@@ -4,6 +4,10 @@ import { IsArray, IsString } from 'class-validator';
 export class CreatePostDto {
 	@ApiProperty()
 	@IsString()
+	preview?: string;
+
+	@ApiProperty()
+	@IsString()
 	title: string;
 
 	@ApiProperty()

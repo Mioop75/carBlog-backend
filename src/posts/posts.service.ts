@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import slugify from 'slugify';
+import { MediaService } from 'src/media/media.service';
 import { TagsService } from 'src/tags/tags.service';
 import { Repository } from 'typeorm';
 import { CreatePostDto } from './create-post.dto';
@@ -14,8 +15,9 @@ import { PostEntity } from './post.entity';
 export class PostsService {
 	constructor(
 		@InjectRepository(PostEntity)
-		private postRepository: Repository<PostEntity>,
-		private tagsService: TagsService
+		private readonly postRepository: Repository<PostEntity>,
+		private readonly tagsService: TagsService,
+		private readonly mediaService: MediaService
 	) {}
 
 	async getAll() {
@@ -38,16 +40,8 @@ export class PostsService {
 		return post;
 	}
 
-	async create(
-		dto: CreatePostDto,
-		userId: number,
-		preview?: Express.Multer.File
-	) {
+	async create(dto: CreatePostDto, userId: number) {
 		const post = this.postRepository.create({ ...dto, author: { id: userId } });
-
-		if (preview !== undefined) {
-			post.preview = preview.path;
-		}
 
 		if (dto.tagIds) {
 			const tags = await this.tagsService.getAll(dto.tagIds);
@@ -61,8 +55,7 @@ export class PostsService {
 		postId: number,
 		userId: number,
 		dto: CreatePostDto,
-		tagIds?: number[],
-		preview?: string
+		tagIds?: number[]
 	) {
 		const currentPost = await this.postRepository.findOneBy({ id: postId });
 
@@ -81,7 +74,6 @@ export class PostsService {
 		await this.postRepository.update(postId, {
 			...dto,
 			slug,
-			preview,
 			tags,
 		});
 
@@ -99,15 +91,14 @@ export class PostsService {
 			throw new BadRequestException('Вы не автор того пост');
 		}
 
+		this.postRepository.delete(post.id);
+
+		this.mediaService.delete(post.preview);
+
 		return 'Пост был удален';
 	}
 
-	async updateByAdmin(
-		postId: number,
-		dto: CreatePostDto,
-		tagIds: number[],
-		preview?: string
-	) {
+	async updateByAdmin(postId: number, dto: CreatePostDto, tagIds: number[]) {
 		const currentPost = await this.postRepository.findOneBy({ id: postId });
 
 		if (currentPost) {
@@ -120,7 +111,6 @@ export class PostsService {
 		await this.postRepository.update(postId, {
 			...dto,
 			slug,
-			preview,
 			tags,
 		});
 
@@ -133,6 +123,10 @@ export class PostsService {
 		if (!post) {
 			throw new NotFoundException('Пост не найден');
 		}
+
+		this.postRepository.delete(post.id);
+
+		this.mediaService.delete(post.preview);
 
 		return 'Пост был удален админом';
 	}

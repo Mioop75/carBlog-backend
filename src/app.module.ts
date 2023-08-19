@@ -7,6 +7,7 @@ import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
 import { typeorm } from './config/typeorm.config';
+import { MediaModule } from './media/media.module';
 import { PostsModule } from './posts/posts.module';
 import { RolesModule } from './roles/roles.module';
 import { TagsModule } from './tags/tags.module';
@@ -38,6 +39,7 @@ import { UsersModule } from './users/users.module';
 		AuthModule,
 		CommentsModule,
 		RolesModule,
+		MediaModule,
 	],
 })
 export class AppModule {}

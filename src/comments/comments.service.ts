@@ -13,8 +13,8 @@ import { CreateCommentDto } from './create-comment.dto';
 export class CommentsService {
 	constructor(
 		@InjectRepository(CommentEntity)
-		private commentRepository: Repository<CommentEntity>,
-		private postsService: PostsService
+		private readonly commentRepository: Repository<CommentEntity>,
+		private readonly postsService: PostsService
 	) {}
 
 	async create(dto: CreateCommentDto, userId: number) {

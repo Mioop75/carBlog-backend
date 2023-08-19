@@ -10,7 +10,10 @@ import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
-	constructor(private jwt: JwtService, private userService: UsersService) {}
+	constructor(
+		private readonly jwt: JwtService,
+		private readonly userService: UsersService
+	) {}
 
 	async registration(dto: CreateUserDto) {
 		const user = await this.userService.create(dto);
