@@ -9,9 +9,11 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { MediaService } from './media.service';
 
+@ApiTags('Media')
 @Controller('media')
 export class MediaController {
 	constructor(private readonly mediaService: MediaService) {}

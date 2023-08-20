@@ -3,7 +3,6 @@ import { IsString, NotContains } from 'class-validator';
 
 export class UpdateUserDto {
 	@ApiProperty()
-	@IsString()
 	avatar: string;
 
 	@ApiProperty()
