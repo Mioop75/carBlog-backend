@@ -11,8 +11,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Role } from 'src/roles/role.enum';
 import { Roles } from 'src/roles/roles.decorator';
@@ -36,20 +34,7 @@ export class UsersController {
 
 	@Put()
 	@UseGuards(AuthGuard)
-	@UseInterceptors(
-		FileInterceptor('avatar', {
-			storage: diskStorage({
-				destination: './upload/avatars',
-				filename(req, file, callback) {
-					const randomName = Array(32)
-						.fill(null)
-						.map(() => Math.round(Math.random() * 16).toString(16))
-						.join('');
-					callback(null, `${randomName}${extname(file.originalname)}`);
-				},
-			}),
-		})
-	)
+	@UseInterceptors(FileInterceptor('avatar'))
 	update(@User('id') id: number, @Body() dto: UpdateUserDto) {
 		return this.usersService.update(id, dto);
 	}
